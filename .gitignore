@@ -21,3 +21,8 @@
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
+.parcel-cache/*
+dist/*
+node_modules/*
+forkify-architecture-recipe-loading.png
+forkify-flowchart-part-*
