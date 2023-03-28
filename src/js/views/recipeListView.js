@@ -5,21 +5,17 @@ class RecipeListView {
   #parentElement = document.querySelector('.results');
   #iconsUrl = icons.split('?')[0];
   #recipeList;
+  // #totalPages = Math.ceil(this.#recipeList.length / this.#itemsPerPage);
+  #currentPage = 1;
+  #itemsPerPage = 10;
 
   constructor() {
     this.onClickItem();
   }
 
-  renderRecipeList(recipes) {
-    this.#recipeList = recipes;
-    this.#parentElement.insertAdjacentHTML(
-      'afterbegin',
-      this.#createRecipeListMarkup()
-    );
-  }
-
-  #createRecipeListMarkup() {
-    return `${this.#recipeList
+  #createRecipeListMarkup(recipes) {
+    console.log('RECiPES', recipes);
+    return recipes
       .map(recipe => {
         return `<li class="preview">
       <a class="preview__link preview__link--active" href="#${recipe.id}">
@@ -38,7 +34,7 @@ class RecipeListView {
       </a>
     </li>`;
       })
-      .join('')}`;
+      .join('');
   }
 
   onClickItem() {
@@ -51,6 +47,22 @@ class RecipeListView {
         controller.showRecipeInfo(recipeId);
       }
     });
+  }
+
+  renderRecipeList(recipes) {
+    this.#recipeList = recipes;
+    console.log('DISPLAY', this.displayItems(1));
+    this.#parentElement.insertAdjacentHTML('afterbegin', this.displayItems(1));
+  }
+
+  displayItems(pageNumber) {
+    const startIndex = (this.#currentPage - 1) * this.#itemsPerPage;
+    const endIndex = startIndex + this.#itemsPerPage;
+    this.#currentPage = pageNumber;
+
+    const currentItems = this.#recipeList.slice(startIndex, endIndex);
+    console.log('CURRENTITEMS', currentItems);
+    return this.#createRecipeListMarkup(currentItems);
   }
 }
 
