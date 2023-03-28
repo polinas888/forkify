@@ -3,14 +3,18 @@ import * as controller from '../controller';
 
 class RecipeListView {
   #parentElement = document.querySelector('.results');
+  #btn_prev = document.querySelector('.pagination__btn--prev');
+  #btn_next = document.querySelector('.pagination__btn--next');
   #iconsUrl = icons.split('?')[0];
-  #recipeList;
-  // #totalPages = Math.ceil(this.#recipeList.length / this.#itemsPerPage);
+  #recipeList = [];
+  #totalPages;
   #currentPage = 1;
   #itemsPerPage = 10;
 
   constructor() {
     this.onClickItem();
+    this.onClickNextBtn();
+    this.onClickPrevBtn();
   }
 
   #createRecipeListMarkup(recipes) {
@@ -49,13 +53,20 @@ class RecipeListView {
     });
   }
 
-  renderRecipeList(recipes) {
+  loadRecipes(recipes) {
     this.#recipeList = recipes;
-    console.log('DISPLAY', this.displayItems(1));
-    this.#parentElement.insertAdjacentHTML('afterbegin', this.displayItems(1));
+    this.renderRecipeList();
+  }
+
+  renderRecipeList() {
+    this.#parentElement.insertAdjacentHTML(
+      'afterbegin',
+      this.displayItems(this.#currentPage)
+    );
   }
 
   displayItems(pageNumber) {
+    this.#totalPages = Math.ceil(this.#recipeList.length / this.#itemsPerPage);
     const startIndex = (this.#currentPage - 1) * this.#itemsPerPage;
     const endIndex = startIndex + this.#itemsPerPage;
     this.#currentPage = pageNumber;
@@ -63,6 +74,34 @@ class RecipeListView {
     const currentItems = this.#recipeList.slice(startIndex, endIndex);
     console.log('CURRENTITEMS', currentItems);
     return this.#createRecipeListMarkup(currentItems);
+  }
+
+  onClickNextBtn() {
+    this.#btn_next.addEventListener('click', event => {
+      this.#currentPage += 1;
+      if (this.#currentPage <= this.#totalPages) {
+        this.#btn_next.textContent = `Page ${this.#currentPage + 1}`;
+        this.#btn_prev.textContent = `Page ${this.#currentPage - 1}`;
+        this.#parentElement.innerHTML = '';
+        this.renderRecipeList();
+      } else {
+        this.#currentPage = this.#totalPages - 1;
+      }
+    });
+  }
+
+  onClickPrevBtn() {
+    this.#btn_prev.addEventListener('click', event => {
+      this.#currentPage -= 1;
+      if (this.#currentPage >= 1) {
+        this.#btn_next.textContent = `Page ${this.#currentPage + 1}`;
+        this.#btn_prev.textContent = `Page ${this.#currentPage - 1}`;
+        this.#parentElement.innerHTML = '';
+        this.renderRecipeList();
+      } else {
+        this.#currentPage = 2;
+      }
+    });
   }
 }
 

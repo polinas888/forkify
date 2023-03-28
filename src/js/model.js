@@ -10,7 +10,6 @@ export const loadRecipe = async function (id) {
     );
     if (!response.ok === true) throw new Error(error);
     const recipeJson = await response.json();
-    console.log('JSON', recipeJson);
     const recipeFromApi = await recipeJson.data.recipe;
     state.recipe = {
       id: recipeFromApi.id,

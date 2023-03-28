@@ -23,12 +23,12 @@ export async function showRecipeInfo(id) {
 async function showRecipeList(recipeType) {
   recipe.renderSpinner();
   await model.loadRecipes(recipeType);
-  recipeList.renderRecipeList(model.state.recipeList);
+  recipeList.loadRecipes(model.state.recipeList);
 }
 
 async function loadRacipiesInfo() {
   const savedState = localStorage.getItem('state');
-  await showRecipeList('soup');
+  await showRecipeList('pizza');
   if (savedState != null) {
     model.state.recipe = JSON.parse(savedState);
     showRecipeInfo(model.state.recipe.id);
