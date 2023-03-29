@@ -18,7 +18,6 @@ class RecipeListView {
   }
 
   #createRecipeListMarkup(recipes) {
-    console.log('RECiPES', recipes);
     return recipes
       .map(recipe => {
         return `<li class="preview">
@@ -55,17 +54,20 @@ class RecipeListView {
 
   loadPageRecipes(recipes) {
     this.#recipeList = recipes;
+    const savedPage = localStorage.getItem('page');
+    if (savedPage != null) {
+      this.#currentPage = Number(savedPage);
+    }
     this.#totalPages = Math.ceil(this.#recipeList.length / this.#itemsPerPage);
     this.renderRecipeList();
     if (this.#totalPages === 1) {
       this.#btnNext.style.display = 'none';
     }
-    if (this.#currentPage !== 1) {
-      this.updateBtnText();
-    }
+    this.updateBtnText();
   }
 
   renderRecipeList() {
+    localStorage.setItem('page', this.#currentPage);
     this.#parentElement.innerHTML = '';
     this.#parentElement.insertAdjacentHTML('afterbegin', this.displayItems());
   }
@@ -105,12 +107,24 @@ class RecipeListView {
   }
 
   updateBtnText() {
-    this.#btnNext.getElementsByTagName('span')[0].textContent = `Page ${
-      this.#currentPage + 1
-    }`;
-    this.#btnPrev.getElementsByTagName('span')[0].textContent = `Page ${
-      this.#currentPage - 1
-    }`;
+    if (this.#currentPage === 1) {
+      this.#btnNext.getElementsByTagName('span')[0].textContent = `Page 2`;
+      this.#btnPrev.getElementsByTagName('span')[0].textContent = `Page 1`;
+    } else if (this.#currentPage === this.#totalPages) {
+      this.#btnNext.getElementsByTagName('span')[0].textContent = `Page ${
+        this.#totalPages
+      }`;
+      this.#btnPrev.getElementsByTagName('span')[0].textContent = `Page ${
+        this.#currentPage - 1
+      }`;
+    } else {
+      this.#btnNext.getElementsByTagName('span')[0].textContent = `Page ${
+        this.#currentPage + 1
+      }`;
+      this.#btnPrev.getElementsByTagName('span')[0].textContent = `Page ${
+        this.#currentPage - 1
+      }`;
+    }
   }
 }
 
