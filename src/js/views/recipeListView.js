@@ -10,6 +10,7 @@ class RecipeListView {
   #totalPages;
   #currentPage = 1;
   #itemsPerPage = 12;
+  #prevRecipeEl;
 
   constructor() {
     this.onClickItem();
@@ -45,12 +46,18 @@ class RecipeListView {
   }
 
   onClickItem() {
-    this.#parentElement.addEventListener('click', function (event) {
-      if (event.target.closest('.preview')) {
+    this.#parentElement.addEventListener('click', event => {
+      if (this.#prevRecipeEl !== undefined) {
+        this.#prevRecipeEl.style.backgroundColor = '#f9f5f3';
+      }
+      const recipeEl = event.target.closest('.preview__link');
+      this.#prevRecipeEl = recipeEl;
+      if (recipeEl) {
         const recipeId = event.target
           .closest('.preview__link')
           .getAttribute('href')
           .slice(1);
+        recipeEl.style.backgroundColor = '#d3c7c3';
         controller.showRecipeInfo(recipeId);
       }
     });
