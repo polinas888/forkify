@@ -9,7 +9,7 @@ class RecipeListView {
   #recipeList = [];
   #totalPages;
   #currentPage = 1;
-  #itemsPerPage = 10;
+  #itemsPerPage = 12;
 
   constructor() {
     this.onClickItem();
