@@ -60,7 +60,8 @@ class RecipeListView {
     if (this.#totalPages === 1) {
       this.#btnNext.style.display = 'none';
     }
-    if (this.#currentPage === 1) {
+    if (this.#currentPage !== 1) {
+      this.updateBtnText();
     }
   }
 
@@ -81,7 +82,7 @@ class RecipeListView {
     this.#btnNext.addEventListener('click', event => {
       this.#currentPage += 1;
       if (this.#currentPage < this.#totalPages) {
-        this.updateBtnTextNoFirstOrLastPage();
+        this.updateBtnText();
         this.renderRecipeList();
       } else {
         this.#currentPage = this.#totalPages;
@@ -94,7 +95,7 @@ class RecipeListView {
     this.#btnPrev.addEventListener('click', event => {
       this.#currentPage -= 1;
       if (this.#currentPage > 1) {
-        this.updateBtnTextNoFirstOrLastPage();
+        this.updateBtnText();
         this.renderRecipeList();
       } else {
         this.#currentPage = 1;
@@ -103,7 +104,7 @@ class RecipeListView {
     });
   }
 
-  updateBtnTextNoFirstOrLastPage() {
+  updateBtnText() {
     this.#btnNext.getElementsByTagName('span')[0].textContent = `Page ${
       this.#currentPage + 1
     }`;
