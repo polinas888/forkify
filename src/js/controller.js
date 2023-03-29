@@ -23,7 +23,7 @@ export async function showRecipeInfo(id) {
 async function showRecipeList(recipeType) {
   recipe.renderSpinner();
   await model.loadRecipes(recipeType);
-  recipeList.loadRecipes(model.state.recipeList);
+  recipeList.loadPageRecipes(model.state.recipeList);
 }
 
 async function loadRacipiesInfo() {

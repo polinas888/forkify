@@ -3,8 +3,8 @@ import * as controller from '../controller';
 
 class RecipeListView {
   #parentElement = document.querySelector('.results');
-  #btn_prev = document.querySelector('.pagination__btn--prev');
-  #btn_next = document.querySelector('.pagination__btn--next');
+  #btnPrev = document.querySelector('.pagination__btn--prev');
+  #btnNext = document.querySelector('.pagination__btn--next');
   #iconsUrl = icons.split('?')[0];
   #recipeList = [];
   #totalPages;
@@ -53,55 +53,63 @@ class RecipeListView {
     });
   }
 
-  loadRecipes(recipes) {
+  loadPageRecipes(recipes) {
     this.#recipeList = recipes;
+    this.#totalPages = Math.ceil(this.#recipeList.length / this.#itemsPerPage);
     this.renderRecipeList();
+    if (this.#totalPages === 1) {
+      this.#btnNext.style.display = 'none';
+    }
+    if (this.#currentPage === 1) {
+    }
   }
 
   renderRecipeList() {
-    this.#parentElement.insertAdjacentHTML(
-      'afterbegin',
-      this.displayItems(this.#currentPage)
-    );
+    this.#parentElement.innerHTML = '';
+    this.#parentElement.insertAdjacentHTML('afterbegin', this.displayItems());
   }
 
-  displayItems(pageNumber) {
-    this.#totalPages = Math.ceil(this.#recipeList.length / this.#itemsPerPage);
+  displayItems() {
     const startIndex = (this.#currentPage - 1) * this.#itemsPerPage;
     const endIndex = startIndex + this.#itemsPerPage;
-    this.#currentPage = pageNumber;
 
     const currentItems = this.#recipeList.slice(startIndex, endIndex);
-    console.log('CURRENTITEMS', currentItems);
     return this.#createRecipeListMarkup(currentItems);
   }
 
   onClickNextBtn() {
-    this.#btn_next.addEventListener('click', event => {
+    this.#btnNext.addEventListener('click', event => {
       this.#currentPage += 1;
-      if (this.#currentPage <= this.#totalPages) {
-        this.#btn_next.textContent = `Page ${this.#currentPage + 1}`;
-        this.#btn_prev.textContent = `Page ${this.#currentPage - 1}`;
-        this.#parentElement.innerHTML = '';
+      if (this.#currentPage < this.#totalPages) {
+        this.updateBtnTextNoFirstOrLastPage();
         this.renderRecipeList();
       } else {
-        this.#currentPage = this.#totalPages - 1;
+        this.#currentPage = this.#totalPages;
+        this.renderRecipeList();
       }
     });
   }
 
   onClickPrevBtn() {
-    this.#btn_prev.addEventListener('click', event => {
+    this.#btnPrev.addEventListener('click', event => {
       this.#currentPage -= 1;
-      if (this.#currentPage >= 1) {
-        this.#btn_next.textContent = `Page ${this.#currentPage + 1}`;
-        this.#btn_prev.textContent = `Page ${this.#currentPage - 1}`;
-        this.#parentElement.innerHTML = '';
+      if (this.#currentPage > 1) {
+        this.updateBtnTextNoFirstOrLastPage();
         this.renderRecipeList();
       } else {
-        this.#currentPage = 2;
+        this.#currentPage = 1;
+        this.renderRecipeList();
       }
     });
+  }
+
+  updateBtnTextNoFirstOrLastPage() {
+    this.#btnNext.getElementsByTagName('span')[0].textContent = `Page ${
+      this.#currentPage + 1
+    }`;
+    this.#btnPrev.getElementsByTagName('span')[0].textContent = `Page ${
+      this.#currentPage - 1
+    }`;
   }
 }
 
