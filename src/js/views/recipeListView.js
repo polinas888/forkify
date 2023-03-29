@@ -88,6 +88,7 @@ class RecipeListView {
         this.renderRecipeList();
       } else {
         this.#currentPage = this.#totalPages;
+        this.updateBtnText();
         this.renderRecipeList();
       }
     });
@@ -101,6 +102,7 @@ class RecipeListView {
         this.renderRecipeList();
       } else {
         this.#currentPage = 1;
+        this.updateBtnText();
         this.renderRecipeList();
       }
     });
@@ -109,21 +111,27 @@ class RecipeListView {
   updateBtnText() {
     if (this.#currentPage === 1) {
       this.#btnNext.getElementsByTagName('span')[0].textContent = `Page 2`;
+      this.#btnNext.getElementsByTagName('svg')[0].style.display = 'inline';
       this.#btnPrev.getElementsByTagName('span')[0].textContent = `Page 1`;
+      this.#btnPrev.getElementsByTagName('svg')[0].style.display = 'none';
     } else if (this.#currentPage === this.#totalPages) {
       this.#btnNext.getElementsByTagName('span')[0].textContent = `Page ${
         this.#totalPages
       }`;
+      this.#btnNext.getElementsByTagName('svg')[0].style.display = 'none';
       this.#btnPrev.getElementsByTagName('span')[0].textContent = `Page ${
         this.#currentPage - 1
       }`;
+      this.#btnPrev.getElementsByTagName('svg')[0].style.display = 'inline';
     } else {
       this.#btnNext.getElementsByTagName('span')[0].textContent = `Page ${
         this.#currentPage + 1
       }`;
+      this.#btnNext.getElementsByTagName('svg')[0].style.display = 'inline';
       this.#btnPrev.getElementsByTagName('span')[0].textContent = `Page ${
         this.#currentPage - 1
       }`;
+      this.#btnPrev.getElementsByTagName('svg')[0].style.display = 'inline';
     }
   }
 }
