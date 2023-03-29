@@ -17,6 +17,69 @@ class RecipeListView {
     this.onClickPrevBtn();
   }
 
+  loadPageRecipes(recipes) {
+    this.#recipeList = recipes;
+    this.#totalPages = Math.ceil(this.#recipeList.length / this.#itemsPerPage);
+    this.renderRecipesPage();
+  }
+
+  renderRecipesPage() {
+    this.updateBtnContent();
+    this.renderRecipeList();
+  }
+
+  renderRecipeList() {
+    this.#parentElement.innerHTML = '';
+    this.#parentElement.insertAdjacentHTML(
+      'afterbegin',
+      this.getPageRecipesMarkup()
+    );
+  }
+
+  getPageRecipesMarkup() {
+    const startIndex = (this.#currentPage - 1) * this.#itemsPerPage;
+    const endIndex = startIndex + this.#itemsPerPage;
+
+    const currentItems = this.#recipeList.slice(startIndex, endIndex);
+    return this.#createRecipeListMarkup(currentItems);
+  }
+
+  onClickItem() {
+    this.#parentElement.addEventListener('click', function (event) {
+      if (event.target.closest('.preview')) {
+        const recipeId = event.target
+          .closest('.preview__link')
+          .getAttribute('href')
+          .slice(1);
+        controller.showRecipeInfo(recipeId);
+      }
+    });
+  }
+
+  onClickNextBtn() {
+    this.#btnNext.addEventListener('click', event => {
+      this.#currentPage += 1;
+      if (this.#currentPage < this.#totalPages) {
+        this.renderRecipesPage();
+      } else {
+        this.#currentPage = this.#totalPages;
+        this.renderRecipesPage();
+      }
+    });
+  }
+
+  onClickPrevBtn() {
+    this.#btnPrev.addEventListener('click', event => {
+      this.#currentPage -= 1;
+      if (this.#currentPage > 1) {
+        this.renderRecipesPage();
+      } else {
+        this.#currentPage = 1;
+        this.renderRecipesPage();
+      }
+    });
+  }
+
   #createRecipeListMarkup(recipes) {
     return recipes
       .map(recipe => {
@@ -40,98 +103,34 @@ class RecipeListView {
       .join('');
   }
 
-  onClickItem() {
-    this.#parentElement.addEventListener('click', function (event) {
-      if (event.target.closest('.preview')) {
-        const recipeId = event.target
-          .closest('.preview__link')
-          .getAttribute('href')
-          .slice(1);
-        controller.showRecipeInfo(recipeId);
-      }
-    });
-  }
+  updateBtnContent() {
+    const spanBtnNext = this.#btnNext.getElementsByTagName('span')[0];
+    const spanBtnPrev = this.#btnPrev.getElementsByTagName('span')[0];
+    const svgBtnNext = this.#btnNext.getElementsByTagName('svg')[0];
+    const svgBtnPrev = this.#btnPrev.getElementsByTagName('svg')[0];
 
-  loadPageRecipes(recipes) {
-    this.#recipeList = recipes;
-    const savedPage = localStorage.getItem('page');
-    if (savedPage != null) {
-      this.#currentPage = Number(savedPage);
-    }
-    this.#totalPages = Math.ceil(this.#recipeList.length / this.#itemsPerPage);
-    this.renderRecipeList();
-    if (this.#totalPages === 1) {
-      this.#btnNext.style.display = 'none';
-    }
-    this.updateBtnText();
-  }
+    this.#totalPages === 1
+      ? (this.#btnNext.style.display = 'none')
+      : (this.#btnNext.style.display = 'inline-block');
 
-  renderRecipeList() {
-    localStorage.setItem('page', this.#currentPage);
-    this.#parentElement.innerHTML = '';
-    this.#parentElement.insertAdjacentHTML('afterbegin', this.displayItems());
-  }
-
-  displayItems() {
-    const startIndex = (this.#currentPage - 1) * this.#itemsPerPage;
-    const endIndex = startIndex + this.#itemsPerPage;
-
-    const currentItems = this.#recipeList.slice(startIndex, endIndex);
-    return this.#createRecipeListMarkup(currentItems);
-  }
-
-  onClickNextBtn() {
-    this.#btnNext.addEventListener('click', event => {
-      this.#currentPage += 1;
-      if (this.#currentPage < this.#totalPages) {
-        this.updateBtnText();
-        this.renderRecipeList();
-      } else {
-        this.#currentPage = this.#totalPages;
-        this.updateBtnText();
-        this.renderRecipeList();
-      }
-    });
-  }
-
-  onClickPrevBtn() {
-    this.#btnPrev.addEventListener('click', event => {
-      this.#currentPage -= 1;
-      if (this.#currentPage > 1) {
-        this.updateBtnText();
-        this.renderRecipeList();
-      } else {
-        this.#currentPage = 1;
-        this.updateBtnText();
-        this.renderRecipeList();
-      }
-    });
-  }
-
-  updateBtnText() {
-    if (this.#currentPage === 1) {
-      this.#btnNext.getElementsByTagName('span')[0].textContent = `Page 2`;
-      this.#btnNext.getElementsByTagName('svg')[0].style.display = 'inline';
-      this.#btnPrev.getElementsByTagName('span')[0].textContent = `Page 1`;
-      this.#btnPrev.getElementsByTagName('svg')[0].style.display = 'none';
-    } else if (this.#currentPage === this.#totalPages) {
-      this.#btnNext.getElementsByTagName('span')[0].textContent = `Page ${
-        this.#totalPages
-      }`;
-      this.#btnNext.getElementsByTagName('svg')[0].style.display = 'none';
-      this.#btnPrev.getElementsByTagName('span')[0].textContent = `Page ${
-        this.#currentPage - 1
-      }`;
-      this.#btnPrev.getElementsByTagName('svg')[0].style.display = 'inline';
-    } else {
-      this.#btnNext.getElementsByTagName('span')[0].textContent = `Page ${
-        this.#currentPage + 1
-      }`;
-      this.#btnNext.getElementsByTagName('svg')[0].style.display = 'inline';
-      this.#btnPrev.getElementsByTagName('span')[0].textContent = `Page ${
-        this.#currentPage - 1
-      }`;
-      this.#btnPrev.getElementsByTagName('svg')[0].style.display = 'inline';
+    switch (this.#currentPage) {
+      case 1:
+        spanBtnNext.textContent = `Page 2`;
+        svgBtnNext.style.display = 'inline';
+        spanBtnPrev.textContent = `Page 1`;
+        svgBtnPrev.style.display = 'none';
+        break;
+      case this.#totalPages:
+        spanBtnNext.textContent = `Page ${this.#totalPages}`;
+        svgBtnNext.style.display = 'none';
+        spanBtnPrev.textContent = `Page ${this.#currentPage - 1}`;
+        svgBtnPrev.style.display = 'inline';
+        break;
+      default:
+        spanBtnNext.textContent = `Page ${this.#currentPage + 1}`;
+        svgBtnNext.style.display = 'inline';
+        spanBtnPrev.textContent = `Page ${this.#currentPage - 1}`;
+        svgBtnPrev.style.display = 'inline';
     }
   }
 }
