@@ -4,7 +4,6 @@ import recipeList from './views/recipeListView.js';
 
 const searchBtn = document.querySelector('.search__btn');
 const searchField = document.querySelector('.search__field');
-const savedRecipes = localStorage.getItem('recipesList');
 const savedStateRecipe = localStorage.getItem('stateRecipe');
 const savedRecipeType = localStorage.getItem('recipeType');
 

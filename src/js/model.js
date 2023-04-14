@@ -40,7 +40,6 @@ export async function loadRecipes(recipeType) {
     const recipes = recipesDataJson.data;
     state.recipeList = recipes.recipes;
     state.recipeType = recipeType.replace(/[^a-zA-Z]/gi, '');
-    localStorage.setItem('recipesList', JSON.stringify(state.recipeList));
     localStorage.setItem('recipeType', JSON.stringify(state.recipeType));
   } catch (error) {
     return new Error(`Can't find recipes`);
