@@ -125,7 +125,7 @@ class RecipeView {
                   <use href="${this.#iconsUrl}#icon-alert-triangle"></use>
                 </svg>
               </div>
-              <p>'No recipes found for your query. Please try again!'</p>
+              <p>'Recipe didn't choose yet!'</p>
             </div>`;
   }
 

@@ -2,41 +2,54 @@ import * as model from './model.js';
 import recipe from './views/recipeView.js';
 import recipeList from './views/recipeListView.js';
 
-// const timeout = function (s) {
-//   return new Promise(function (_, reject) {
-//     setTimeout(function () {
-//       reject(new Error(`Request took too long! Timeout after ${s} second`));
-//     }, s * 1000);
-//   });
-// };
-
-// https://forkify-api.herokuapp.com/v2
-
-///////////////////////////////////////
+const searchBtn = document.querySelector('.search__btn');
+const searchField = document.querySelector('.search__field');
+const savedRecipes = localStorage.getItem('recipesList');
+const savedStateRecipe = localStorage.getItem('stateRecipe');
+const savedRecipeType = localStorage.getItem('recipeType');
 
 export async function showRecipeInfo(id) {
-  recipe.renderSpinner();
-  await model.loadRecipe(id);
+  if (id !== undefined) {
+    recipe.renderSpinner();
+    await model.loadRecipe(id);
+  }
   recipe.renderRecipeOrNoRecipe(model.state.recipe);
 }
 
-async function showRecipeList(recipeType) {
+async function showRecipeList() {
   recipe.renderSpinner();
-  await model.loadRecipes(recipeType);
-  recipeList.loadPageRecipes(model.state.recipeList);
-}
 
-async function loadRacipiesInfo() {
-  const savedState = localStorage.getItem('state');
-  await showRecipeList('pizza');
-  if (savedState != null) {
-    model.state.recipe = JSON.parse(savedState);
-    showRecipeInfo(model.state.recipe.id);
+  if (model.state.recipeList.length !== 0) {
+    recipeList.showPagination(true);
+    recipeList.loadPageRecipes(model.state.recipeList);
   } else {
-    console.log('LIST', model.state.recipeList);
-    model.state.recipe = model.state.recipeList[0];
-    showRecipeInfo(model.state.recipeList[0].id);
+    recipeList.showPagination(false);
+    recipeList.loadErrorNoSuchRecipes();
   }
 }
 
-loadRacipiesInfo();
+async function loadRacipiesInfo(recipeType) {
+  if (recipeType !== null) {
+    recipeList.showPagination(true);
+    await model.loadRecipes(recipeType);
+    await showRecipeList();
+  } else {
+    recipeList.showPagination(false);
+    recipeList.letsSearchForRecipesMessage();
+  }
+
+  if (model.state.recipeList.length !== 0 && savedStateRecipe !== null) {
+    model.state.recipe = JSON.parse(savedStateRecipe);
+    showRecipeInfo(model.state.recipe.id);
+  } else {
+    showRecipeInfo(undefined);
+  }
+}
+
+searchBtn.addEventListener('click', event => {
+  event.preventDefault();
+  loadRacipiesInfo(searchField.value);
+  searchField.value = '';
+});
+
+loadRacipiesInfo(savedRecipeType);

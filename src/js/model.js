@@ -1,5 +1,6 @@
 export const state = {
   recipe: {},
+  recipeType: null,
   recipeList: [],
 };
 
@@ -21,22 +22,26 @@ export const loadRecipe = async function (id) {
       cookingTime: recipeFromApi.cooking_time,
       ingredients: recipeFromApi.ingredients,
     };
-    localStorage.setItem('state', JSON.stringify(state.recipe));
+    localStorage.setItem('stateRecipe', JSON.stringify(state.recipe));
   } catch (error) {
     throw new Error(error);
   }
 };
 
-export async function loadRecipes(recipe) {
+export async function loadRecipes(recipeType) {
   try {
     const response = await fetch(
-      `https://forkify-api.herokuapp.com/api/v2/recipes?search=${recipe}`
+      `https://forkify-api.herokuapp.com/api/v2/recipes?search=${recipeType}`
     );
-    if (!response.ok === true) throw new Error(error);
+    if (!response.ok) {
+      throw new Error(error);
+    }
     const recipesDataJson = await response.json();
-    const recipes = await recipesDataJson.data;
+    const recipes = recipesDataJson.data;
     state.recipeList = recipes.recipes;
-    // localStorage.setItem('state', JSON.stringify(state));
+    state.recipeType = recipeType.replace(/[^a-zA-Z]/gi, '');
+    localStorage.setItem('recipesList', JSON.stringify(state.recipeList));
+    localStorage.setItem('recipeType', JSON.stringify(state.recipeType));
   } catch (error) {
     return new Error(`Can't find recipes`);
   }

@@ -5,6 +5,7 @@ class RecipeListView {
   #parentElement = document.querySelector('.results');
   #btnPrev = document.querySelector('.pagination__btn--prev');
   #btnNext = document.querySelector('.pagination__btn--next');
+  #pagination_buttons = document.querySelector('.pagination_buttons');
   #iconsUrl = icons.split('?')[0];
   #recipeList = [];
   #totalPages;
@@ -34,6 +35,22 @@ class RecipeListView {
     this.#parentElement.insertAdjacentHTML(
       'afterbegin',
       this.getPageRecipesMarkup()
+    );
+  }
+
+  loadErrorNoSuchRecipes() {
+    this.#parentElement.innerHTML = '';
+    this.#parentElement.insertAdjacentHTML(
+      'afterbegin',
+      `<p class="no_search_result">I didn't find such recipes</p>`
+    );
+  }
+
+  letsSearchForRecipesMessage() {
+    this.#parentElement.innerHTML = '';
+    this.#parentElement.insertAdjacentHTML(
+      'afterbegin',
+      `<p class="no_search_result">let's search for recipes</p>`
     );
   }
 
@@ -85,6 +102,14 @@ class RecipeListView {
         this.renderRecipesPage();
       }
     });
+  }
+
+  showPagination(showPagination) {
+    if (showPagination == true) {
+      this.#pagination_buttons.classList.remove('hide_pagination');
+    } else {
+      this.#pagination_buttons.classList.add('hide_pagination');
+    }
   }
 
   #createRecipeListMarkup(recipes) {

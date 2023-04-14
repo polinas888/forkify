@@ -29,6 +29,17 @@
   }
 }
 
+.no_search_result {
+  color: rgba(255, 0, 0, 0.461);
+  font-size: 2.4rem;
+  text-align: center;
+  padding: 1.6rem;
+}
+
+.hide_pagination {
+  display: none;
+}
+
 .copyright {
   color: $color-grey-dark-2;
   font-size: 1.2rem;
