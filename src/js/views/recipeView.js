@@ -2,9 +2,20 @@ import icons from 'url:../../img/icons.svg';
 
 class RecipeView {
   #parentElement = document.querySelector('.recipe');
+  #bookmarkBtn;
   #data;
 
   #iconsUrl = icons.split('?')[0];
+
+  init() {
+    this.#bookmarkBtn = document.querySelector('.bookmark-btn');
+    this.#bookmarkBtn.addEventListener('click', event => {
+      event.target
+        .closest('svg')
+        .querySelector('use')
+        .setAttribute('href', `${this.#iconsUrl}#icon-bookmark`);
+    });
+  }
 
   renderRecipeOrNoRecipe(data) {
     this.#data = data;
@@ -15,6 +26,7 @@ class RecipeView {
         ? this.#createRecipeMarkup()
         : this.#createErrorMarkup()
     );
+    this.init();
   }
 
   #createRecipeMarkup() {
@@ -65,7 +77,7 @@ class RecipeView {
         <use href="${this.#iconsUrl}#icon-user"></use>
       </svg>
     </div>
-    <button class="btn--round">
+    <button class="btn--round bookmark-btn">
       <svg class="">
         <use href="${this.#iconsUrl}#icon-bookmark-fill"></use>
       </svg>
