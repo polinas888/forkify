@@ -9,29 +9,19 @@ class RecipeView {
   #bookmarks = JSON.parse(this.#bookmarksJson);
   #iconsUrl = icons.split('?')[0];
 
-  init() {
+  #init() {
     if (this.#data.id !== undefined) {
       this.#bookmarkBtn = document.querySelector('.bookmark-btn');
       const bookmarked = this.#isBookmarked();
-      if (bookmarked) {
-        this.#bookmarkBtn
-          .querySelector('use')
-          .setAttribute('href', `${this.#iconsUrl}#icon-bookmark`);
-        this.#bookmarkBtn.disabled = true;
-      } else {
-        this.#bookmarkBtn
-          .querySelector('use')
-          .setAttribute('href', `${this.#iconsUrl}#icon-bookmark-fill`);
-        this.#bookmarkBtn.disabled = false;
-      }
+      this.#setupBookmarkBtn(bookmarked);
       this.#bookmarkBtn.addEventListener('click', event => {
         event.target
           .closest('svg')
           .querySelector('use')
           .setAttribute('href', `${this.#iconsUrl}#icon-bookmark`);
-        bookmarks.addBookmark(this.#data);
         this.#bookmarkBtn.disabled = true;
-        this.#updateBookmarkState(true);
+        bookmarks.addBookmark(this.#data);
+        this.#bookmarks.push(this.#data);
       });
     }
   }
@@ -45,7 +35,7 @@ class RecipeView {
         ? this.#createRecipeMarkup()
         : this.#createErrorMarkup()
     );
-    this.init();
+    this.#init();
   }
 
   #isBookmarked() {
@@ -55,19 +45,18 @@ class RecipeView {
     );
   }
 
-  #updateBookmarkState(bookmarked) {
-    if (this.#bookmarks === null) {
-      this.#bookmarks = [];
-    }
+  #setupBookmarkBtn(bookmarked) {
     if (bookmarked) {
-      this.#bookmarks.push(this.#data);
+      this.#bookmarkBtn
+        .querySelector('use')
+        .setAttribute('href', `${this.#iconsUrl}#icon-bookmark`);
+      this.#bookmarkBtn.disabled = true;
     } else {
-      const index = this.#bookmarks.findIndex(
-        bookmark => bookmark.id === this.#data.id
-      );
-      this.#bookmarks.splice(index, 1);
+      this.#bookmarkBtn
+        .querySelector('use')
+        .setAttribute('href', `${this.#iconsUrl}#icon-bookmark-fill`);
+      this.#bookmarkBtn.disabled = false;
     }
-    localStorage.setItem('bookmarks', JSON.stringify(this.#bookmarks));
   }
 
   #createRecipeMarkup() {
