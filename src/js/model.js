@@ -1,3 +1,5 @@
+import bookmarks from './views/bookmarks';
+
 export const state = {
   recipe: {},
   recipeType: null,

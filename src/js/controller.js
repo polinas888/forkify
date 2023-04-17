@@ -1,6 +1,7 @@
 import * as model from './model.js';
 import recipe from './views/recipeView.js';
 import recipeList from './views/recipeListView.js';
+import bookmarks from './views/bookmarks.js';
 
 const searchBtn = document.querySelector('.search__btn');
 const searchField = document.querySelector('.search__field');

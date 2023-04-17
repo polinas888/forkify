@@ -1,20 +1,39 @@
 import icons from 'url:../../img/icons.svg';
+import bookmarks from './bookmarks';
 
 class RecipeView {
   #parentElement = document.querySelector('.recipe');
   #bookmarkBtn;
   #data;
-
+  #bookmarksJson = localStorage.getItem('bookmarks');
+  #bookmarks = JSON.parse(this.#bookmarksJson);
   #iconsUrl = icons.split('?')[0];
 
   init() {
-    this.#bookmarkBtn = document.querySelector('.bookmark-btn');
-    this.#bookmarkBtn.addEventListener('click', event => {
-      event.target
-        .closest('svg')
-        .querySelector('use')
-        .setAttribute('href', `${this.#iconsUrl}#icon-bookmark`);
-    });
+    if (this.#data.id !== undefined) {
+      this.#bookmarkBtn = document.querySelector('.bookmark-btn');
+      const bookmarked = this.#isBookmarked();
+      if (bookmarked) {
+        this.#bookmarkBtn
+          .querySelector('use')
+          .setAttribute('href', `${this.#iconsUrl}#icon-bookmark`);
+        this.#bookmarkBtn.disabled = true;
+      } else {
+        this.#bookmarkBtn
+          .querySelector('use')
+          .setAttribute('href', `${this.#iconsUrl}#icon-bookmark-fill`);
+        this.#bookmarkBtn.disabled = false;
+      }
+      this.#bookmarkBtn.addEventListener('click', event => {
+        event.target
+          .closest('svg')
+          .querySelector('use')
+          .setAttribute('href', `${this.#iconsUrl}#icon-bookmark`);
+        bookmarks.addBookmark(this.#data);
+        this.#bookmarkBtn.disabled = true;
+        this.#updateBookmarkState(true);
+      });
+    }
   }
 
   renderRecipeOrNoRecipe(data) {
@@ -27,6 +46,28 @@ class RecipeView {
         : this.#createErrorMarkup()
     );
     this.init();
+  }
+
+  #isBookmarked() {
+    return (
+      this.#bookmarks !== null &&
+      this.#bookmarks.some(bookmark => bookmark.id === this.#data.id)
+    );
+  }
+
+  #updateBookmarkState(bookmarked) {
+    if (this.#bookmarks === null) {
+      this.#bookmarks = [];
+    }
+    if (bookmarked) {
+      this.#bookmarks.push(this.#data);
+    } else {
+      const index = this.#bookmarks.findIndex(
+        bookmark => bookmark.id === this.#data.id
+      );
+      this.#bookmarks.splice(index, 1);
+    }
+    localStorage.setItem('bookmarks', JSON.stringify(this.#bookmarks));
   }
 
   #createRecipeMarkup() {
