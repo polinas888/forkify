@@ -1,4 +1,5 @@
 import icons from 'url:../../img/icons.svg';
+import * as controller from '../controller';
 
 class Bookmarks {
   #parentElement = document.querySelector('.bookmarks__list');
@@ -11,7 +12,7 @@ class Bookmarks {
       this.#bookmarks = JSON.parse(this.#savedBookmarks);
     }
     this.showBookmarksOrNo();
-    //  this.onClickItem();
+    this.onClickItem();
   }
 
   addBookmark(bookmark) {
@@ -57,23 +58,15 @@ class Bookmarks {
   </div>`;
   }
 
-  // onClickItem() {
-  //   this.#parentElement.addEventListener('click', event => {
-  //     if (this.#prevRecipeEl !== undefined) {
-  //       this.#prevRecipeEl.style.backgroundColor = '#f9f5f3';
-  //     }
-  //     const recipeEl = event.target.closest('.preview__link');
-  //     this.#prevRecipeEl = recipeEl;
-  //     if (recipeEl) {
-  //       const recipeId = event.target
-  //         .closest('.preview__link')
-  //         .getAttribute('href')
-  //         .slice(1);
-  //       recipeEl.style.backgroundColor = '#d3c7c3';
-  //       controller.showRecipeInfo(recipeId);
-  //     }
-  //   });
-  // }
+  onClickItem() {
+    this.#parentElement.addEventListener('click', event => {
+      const recipeId = event.target
+        .closest('.preview__link')
+        .getAttribute('href')
+        .slice(1);
+      controller.showRecipeInfo(recipeId);
+    });
+  }
 
   #createBookmarkMarkup(bookmarks) {
     return bookmarks
