@@ -1,12 +1,12 @@
 import icons from 'url:../../img/icons.svg';
 import * as controller from '../controller';
+import GenericListRecipes from './GenericListRecipes';
 
-class RecipeListView {
+class RecipeListView extends GenericListRecipes {
   #parentElement = document.querySelector('.results');
   #btnPrev = document.querySelector('.pagination__btn--prev');
   #btnNext = document.querySelector('.pagination__btn--next');
   #pagination_buttons = document.querySelector('.pagination_buttons');
-  #iconsUrl = icons.split('?')[0];
   #recipeList = [];
   #totalPages;
   #currentPage = 1;
@@ -14,6 +14,7 @@ class RecipeListView {
   #prevRecipeEl;
 
   constructor() {
+    super();
     this.onClickItem();
     this.onClickNextBtn();
     this.onClickPrevBtn();
@@ -39,19 +40,13 @@ class RecipeListView {
   }
 
   loadErrorNoSuchRecipes() {
-    this.#parentElement.innerHTML = '';
-    this.#parentElement.insertAdjacentHTML(
-      'afterbegin',
-      `<p class="no_search_result">I didn't find such recipes</p>`
-    );
+    const noResultMesage = `<p class="no_search_result">I didn't find such recipes</p>`;
+    super.loadNoRecipes(noResultMesage, this.#parentElement);
   }
 
   letsSearchForRecipesMessage() {
-    this.#parentElement.innerHTML = '';
-    this.#parentElement.insertAdjacentHTML(
-      'afterbegin',
-      `<p class="no_search_result">let's search for recipes</p>`
-    );
+    const letSearchMessage = `<p class="no_search_result">let's search for recipes</p>`;
+    super.loadNoRecipes(letSearchMessage, this.#parentElement);
   }
 
   getPageRecipesMarkup() {
@@ -59,7 +54,7 @@ class RecipeListView {
     const endIndex = startIndex + this.#itemsPerPage;
 
     const currentItems = this.#recipeList.slice(startIndex, endIndex);
-    return this.#createRecipeListMarkup(currentItems);
+    return super.createRecipeListMarkup(currentItems);
   }
 
   onClickItem() {
@@ -105,34 +100,12 @@ class RecipeListView {
   }
 
   showPagination(showPagination) {
+    this.#currentPage = 1;
     if (showPagination == true) {
       this.#pagination_buttons.classList.remove('hide_pagination');
     } else {
       this.#pagination_buttons.classList.add('hide_pagination');
     }
-  }
-
-  #createRecipeListMarkup(recipes) {
-    return recipes
-      .map(recipe => {
-        return `<li class="preview">
-      <a class="preview__link preview__link--active" href="#${recipe.id}">
-        <figure class="preview__fig">
-          <img src="${recipe.image_url}" />
-        </figure>
-        <div class="preview__data">
-          <h4 class="preview__title">${recipe.title}</h4>
-          <p class="preview__publisher">${recipe.publisher}</p>
-          <div class="preview__user-generated">
-            <svg>
-              <use href="${this.#iconsUrl}#icon-user"></use>
-            </svg>
-          </div>
-        </div>
-      </a>
-    </li>`;
-      })
-      .join('');
   }
 
   updateBtnContent() {

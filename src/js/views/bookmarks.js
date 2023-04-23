@@ -1,18 +1,20 @@
 import icons from 'url:../../img/icons.svg';
 import * as controller from '../controller';
+import GenericListRecipes from './GenericListRecipes';
 
-class Bookmarks {
+class Bookmarks extends GenericListRecipes {
   #parentElement = document.querySelector('.bookmarks__list');
   #bookmarks = [];
   #savedBookmarks = localStorage.getItem('bookmarks');
   #iconsUrl = icons.split('?')[0];
 
   constructor() {
+    super();
     if (this.#savedBookmarks !== null) {
       this.#bookmarks = JSON.parse(this.#savedBookmarks);
     }
     this.showBookmarksOrNo();
-    this.onClickItem();
+    super.onClickItem(this.#parentElement, controller);
   }
 
   addBookmark(bookmark) {
@@ -25,7 +27,7 @@ class Bookmarks {
     if (this.#bookmarks !== null && this.#bookmarks.length > 0) {
       this.renderBookmarks();
     } else {
-      this.loadNoBookmark();
+      super.loadNoRecipes(this.#createNoBookmarkMarkup(), this.#parentElement);
     }
   }
 
@@ -33,15 +35,7 @@ class Bookmarks {
     this.#parentElement.innerHTML = '';
     this.#parentElement.insertAdjacentHTML(
       'afterbegin',
-      this.#createBookmarkMarkup(this.#bookmarks)
-    );
-  }
-
-  loadNoBookmark() {
-    this.#parentElement.innerHTML = '';
-    this.#parentElement.insertAdjacentHTML(
-      'afterbegin',
-      this.#createNoBookmarkMarkup()
+      super.createRecipeListMarkup(this.#bookmarks)
     );
   }
 
@@ -56,39 +50,6 @@ class Bookmarks {
       No bookmarks yet. Find a nice recipe and bookmark it :)
     </p>
   </div>`;
-  }
-
-  onClickItem() {
-    this.#parentElement.addEventListener('click', event => {
-      const recipeId = event.target
-        .closest('.preview__link')
-        .getAttribute('href')
-        .slice(1);
-      controller.showRecipeInfo(recipeId);
-    });
-  }
-
-  #createBookmarkMarkup(bookmarks) {
-    return bookmarks
-      .map(bookmark => {
-        return `<li class="preview">
-      <a class="preview__link preview__link--active" href="#${bookmark.id}">
-        <figure class="preview__fig">
-          <img src="${bookmark.image}" />
-        </figure>
-        <div class="preview__data">
-          <h4 class="preview__title">${bookmark.title}</h4>
-          <p class="preview__publisher">${bookmark.publisher}</p>
-          <div class="preview__user-generated">
-            <svg>
-              <use href="${this.#iconsUrl}#icon-user"></use>
-            </svg>
-          </div>
-        </div>
-      </a>
-    </li>`;
-      })
-      .join('');
   }
 }
 
