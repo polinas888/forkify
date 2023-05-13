@@ -103,9 +103,6 @@ class RecipeView {
     </div>
   
     <div class="recipe__user-generated">
-      <svg>
-        <use href="${this.#iconsUrl}#icon-user"></use>
-      </svg>
     </div>
     <button class="btn--round bookmark-btn">
       <svg class="">
